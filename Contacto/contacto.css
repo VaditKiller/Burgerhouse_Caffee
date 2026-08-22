@@ -1,0 +1,36 @@
+/* Estilos para la página de contacto */
+.contact-section {
+    padding: 5rem 0;
+    min-height: calc(100vh - var(--header-height) - 250px);
+}
+
+.section__subtitle {
+    text-align: center;
+    max-width: 600px;
+    margin: -2rem auto 3rem auto;
+    color: var(--text-light-color);
+}
+
+.contact-form-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+}
+
+textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-family: var(--font-sans);
+    resize: vertical;
+}
+
+body.dark-mode textarea {
+    background-color: var(--surface-alt-color);
+    border-color: #444;
+    color: var(--text-dark-color);
+}

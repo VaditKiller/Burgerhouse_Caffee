@@ -1,0 +1,114 @@
+.product-detail-section {
+    padding: 4rem 0;
+    background-color: var(--bg-color);
+}
+
+.product-detail__container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+@media (min-width: 768px) {
+    .product-detail__container {
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+    }
+}
+
+.product-detail__image-container {
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+}
+
+.product-detail__image {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+}
+
+.product-detail__info {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-detail__name {
+    font-size: 2.8rem;
+    font-family: var(--font-serif);
+    margin-bottom: 0.5rem;
+}
+
+.product-detail__desc {
+    font-size: 1rem;
+    color: var(--text-light-color);
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+}
+
+.product-detail__price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 2rem;
+}
+
+.customizations {
+    margin-bottom: 2rem;
+    background-color: var(--surface-alt-color);
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+}
+
+.customizations__title {
+    font-size: 1.2rem;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.custom__group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.custom__label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.custom__label input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-color);
+}
+
+.product-detail__actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.quantity-selector {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--surface-alt-color);
+    border-radius: 8px;
+}
+
+.quantity-selector .quantity-btn {
+    width: 45px;
+    height: 45px;
+    font-size: 1.5rem;
+}
+
+.quantity-selector .quantity-value {
+    padding: 0 1rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+}

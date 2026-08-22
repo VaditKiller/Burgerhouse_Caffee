@@ -1,0 +1,40 @@
+/* Estilos para la página de inicio de sesión */
+.auth-section {
+    padding: 5rem 0;
+    min-height: calc(100vh - var(--header-height) - 250px); /* Ajusta 250px al alto de tu footer */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.auth-container {
+    max-width: 450px;
+    width: 100%;
+    padding: 2rem;
+    background-color: var(--surface-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-soft);
+}
+
+.auth__tabs {
+    display: flex;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid var(--surface-alt-color);
+}
+
+.auth__tab-btn {
+    flex: 1;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-bottom: 3px solid transparent;
+    color: var(--text-light-color);
+}
+
+.auth__tab-btn.active {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.auth__form { display: none; }
+.auth__form.active { display: block; }

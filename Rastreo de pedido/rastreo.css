@@ -1,0 +1,7 @@
+/* Estilos para la página de rastreo */
+.track-section {
+    min-height: calc(100vh - var(--header-height) - 250px); /* Ajusta 250px al alto de tu footer */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
