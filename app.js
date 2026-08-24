@@ -43,9 +43,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const steps = document.querySelectorAll('.step');
     const toast = document.getElementById('toast');
     const checkoutModal = document.getElementById('checkout-modal');
-    const checkoutForm = document.getElementById('checkout-form');
+    const checkoutForm = document.getElementById('checkout-form'); 
     const contactForm = document.getElementById('contact-form'); 
     const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const fallbackProductImage = 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800';
 
     // ==================== FUNCIONES DE RENDERIZADO ====================
     const renderProducts = (filter = 'all') => {
@@ -56,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('article');
             card.className = 'product__card animate-on-scroll';
             card.innerHTML = `
-                <img src="${product.image}" alt="${product.name}" class="product__image">
+                <img src="${product.image}" alt="${product.name}" class="product__image" loading="lazy" decoding="async">
                 <div class="product__info">
                     <h3 class="product__name">${product.name}</h3>
                     <span class="product__price">Bs. ${product.price.toFixed(2)}</span>
@@ -79,20 +80,25 @@ document.addEventListener('DOMContentLoaded', () => {
             cartItemsContainer.innerHTML = '<p class="cart__empty-msg">Tu carrito está vacío.</p>';
         } else {
             state.cart.forEach(item => {
+                const itemKey = item.cartId || item.id;
+                const extrasText = item.extras?.length
+                    ? `<p class="cart__item-extras">+ ${item.extras.map(extra => extra.name).join(', ')}</p>`
+                    : '';
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart__item';
                 cartItem.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}" class="cart__item-img">
+                    <img src="${item.image}" alt="${item.name}" class="cart__item-img" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='${fallbackProductImage}';">
                     <div class="cart__item-info">
                         <p class="cart__item-name">${item.name}</p>
+                        ${extrasText}
                         <p class="cart__item-price">Bs. ${item.price.toFixed(2)}</p>
                         <div class="cart__item-actions">
-                            <button class="quantity-btn" data-id="${item.id}" data-change="-1">-</button>
+                            <button class="quantity-btn" data-cart-key="${itemKey}" data-change="-1">-</button>
                             <span>${item.quantity}</span>
-                            <button class="quantity-btn" data-id="${item.id}" data-change="1">+</button>
+                            <button class="quantity-btn" data-cart-key="${itemKey}" data-change="1">+</button>
                         </div>
                     </div>
-                    <button class="remove-item-btn" data-id="${item.id}">&times;</button>
+                    <button class="remove-item-btn" data-cart-key="${itemKey}">&times;</button>
                 `;
                 cartItemsContainer.appendChild(cartItem);
             });
@@ -135,33 +141,50 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // ==================== ACCIONES Y MANEJADORES DE EVENTOS ====================
-    const addToCart = (productId) => {
+    const getCartItemKey = (item) => String(item.cartId || item.id);
+
+    const addToCart = (productId, options = {}) => {
         const product = state.products.find(p => p.id === productId);
-        const cartItem = state.cart.find(item => item.id === productId);
+        if (!product) return;
+
+        const quantity = Math.max(1, Number(options.quantity) || 1);
+        const extras = options.extras || [];
+        const extrasTotal = extras.reduce((sum, extra) => sum + extra.price, 0);
+        const cartId = extras.length
+            ? `${product.id}:${extras.map(extra => extra.value).sort().join('|')}`
+            : String(product.id);
+        const cartItem = state.cart.find(item => getCartItemKey(item) === cartId);
 
         if (cartItem) {
-            cartItem.quantity++;
+            cartItem.quantity += quantity;
         } else {
-            state.cart.push({ ...product, quantity: 1 });
+            state.cart.push({
+                ...product,
+                cartId,
+                basePrice: product.price,
+                price: product.price + extrasTotal,
+                quantity,
+                extras,
+            });
         }
         showToast(`${product.name} añadido al carrito`);
         renderCart();
     };
 
-    const updateCartQuantity = (productId, change) => {
-        const cartItem = state.cart.find(item => item.id === productId);
+    const updateCartQuantity = (cartKey, change) => {
+        const cartItem = state.cart.find(item => getCartItemKey(item) === String(cartKey));
         if (cartItem) {
             cartItem.quantity += change;
             if (cartItem.quantity <= 0) {
-                removeFromCart(productId);
+                removeFromCart(cartKey);
             } else {
                 renderCart();
             }
         }
     };
 
-    const removeFromCart = (productId) => {
-        state.cart = state.cart.filter(item => item.id !== productId);
+    const removeFromCart = (cartKey) => {
+        state.cart = state.cart.filter(item => getCartItemKey(item) !== String(cartKey));
         renderCart();
     };
 
@@ -346,6 +369,70 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     };
+
+    const initProductDetail = () => {
+        const detailSection = document.querySelector('.product-detail-section');
+        if (!detailSection) return;
+
+        const currentUrl = new URL(window.location.href);
+        const productId = parseInt(currentUrl.searchParams.get('id') || '1', 10);
+        const product = state.products.find(item => item.id === productId) || state.products[0];
+        const quantityValue = document.getElementById('product-detail-quantity');
+        const totalPriceEl = document.getElementById('product-detail-total');
+        const addButton = document.getElementById('product-detail-add-to-cart');
+        const imageEl = document.querySelector('.product-detail__image');
+        const nameEl = document.querySelector('.product-detail__name');
+        const descEl = document.querySelector('.product-detail__desc');
+        const extraInputs = detailSection.querySelectorAll('input[name="extra"]');
+        let quantity = 1;
+
+        const getSelectedExtras = () => Array.from(extraInputs)
+            .filter(input => input.checked)
+            .map(input => ({
+                value: input.value,
+                name: input.dataset.name,
+                price: Number(input.dataset.price) || 0,
+            }));
+
+        const updateTotal = () => {
+            const extrasTotal = getSelectedExtras().reduce((sum, extra) => sum + extra.price, 0);
+            totalPriceEl.textContent = `Bs. ${((product.price + extrasTotal) * quantity).toFixed(2)}`;
+            quantityValue.textContent = quantity;
+        };
+
+        if (nameEl) nameEl.textContent = product.name;
+        if (descEl) descEl.textContent = product.desc;
+        if (addButton) addButton.dataset.id = product.id;
+        if (imageEl) {
+            imageEl.alt = product.name;
+            imageEl.dataset.fallbackSrc = imageEl.dataset.fallbackSrc || product.image || fallbackProductImage;
+        }
+
+        detailSection.querySelectorAll('.product-detail__qty-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                if (button.dataset.action === 'increase') {
+                    quantity += 1;
+                } else {
+                    quantity = Math.max(1, quantity - 1);
+                }
+                updateTotal();
+            });
+        });
+
+        extraInputs.forEach(input => input.addEventListener('change', updateTotal));
+
+        if (addButton) {
+            addButton.addEventListener('click', () => {
+                addToCart(product.id, {
+                    quantity,
+                    extras: getSelectedExtras(),
+                });
+                cartDrawer.classList.add('active');
+            });
+        }
+
+        updateTotal();
+    };
     
     // ==================== EVENT LISTENERS ====================
     if (menuGrid) {
@@ -364,12 +451,12 @@ document.addEventListener('DOMContentLoaded', () => {
             cartDrawer.classList.remove('active');
         }
         if (e.target.classList.contains('quantity-btn')) {
-            const id = parseInt(e.target.dataset.id);
+            const id = e.target.dataset.cartKey || e.target.dataset.id;
             const change = parseInt(e.target.dataset.change);
             updateCartQuantity(id, change);
         }
         if (e.target.classList.contains('remove-item-btn')) {
-            const id = parseInt(e.target.dataset.id);
+            const id = e.target.dataset.cartKey || e.target.dataset.id;
             removeFromCart(id);
         }
     });
@@ -424,7 +511,7 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggleBtn.addEventListener('click', handleThemeToggle);
 
     // Contact Form
-    if (contactForm) {
+    if (contactForm && document.getElementById('contact-name')) {
         contactForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const name = document.getElementById('contact-name').value;
@@ -460,6 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (document.getElementById('menu-grid')) {
             renderPageSpecificContent();
         }
+        initProductDetail();
         if (document.getElementById('cart-items-container')) {
             renderCart();
         }

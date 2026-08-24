@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contacto - Burgerhaus & Café</title>
+    <title>Soporte - Burgerhaus & Café</title>
 
     <!-- Google Fonts & Font Awesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,6 +29,7 @@
                     <li><a href="../index.html#menu" class="nav__link">Menú</a></li>
                     <li><a href="../Rastreo de pedido/rastreo.html" class="nav__link">Rastrear Pedido</a></li>
                     <li><a href="contacto.html" class="nav__link">Contacto</a></li>
+                    <li><a href="../Usuario/login.html" class="nav__link nav__login">Iniciar Sesión</a></li>
                 </ul>
             </nav>
             <div class="header__actions">
@@ -41,32 +42,40 @@
     </header>
 
     <main>
-        <!-- ==================== CONTACT SECTION ==================== -->
         <section id="contact" class="contact-section">
-            <div class="container">
-                <h2 class="section__title">Contáctanos</h2>
-                <p class="section__subtitle">¿Tienes alguna duda, sugerencia o queja? Escríbenos.</p>
-                <div class="contact-form-container">
-                    <form id="contact-form" class="contact-form">
-                        <div class="form__group">
-                            <label for="contact-name">Nombre</label>
-                            <input type="text" id="contact-name" required>
-                        </div>
-                        <div class="form__group">
-                            <label for="contact-email">Correo Electrónico</label>
-                            <input type="email" id="contact-email" required>
-                        </div>
-                        <div class="form__group">
-                            <label for="contact-subject">Asunto</label>
-                            <input type="text" id="contact-subject" required>
-                        </div>
-                        <div class="form__group">
-                            <label for="contact-message">Mensaje</label>
-                            <textarea id="contact-message" rows="6" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn--primary btn--full">Enviar Mensaje</button>
-                    </form>
+            <div class="support-card">
+                <div class="support-card__header">
+                    <div class="support-icon" aria-hidden="true"><i class="fa-solid fa-headset"></i></div>
+                    <h1>How can we help?</h1>
+                    <p>Tell us what happened and our support team will take a look.</p>
                 </div>
+                <form id="contact-form" class="support-form">
+                    <div class="support-field">
+                        <label for="contact-issue">What happened?</label>
+                        <select id="contact-issue" name="issue" required>
+                            <option value="" selected disabled>Select an issue...</option>
+                            <option value="order">Something went wrong with my order</option>
+                            <option value="delivery">My delivery is late</option>
+                            <option value="payment">I have a payment question</option>
+                            <option value="other">Something else</option>
+                        </select>
+                    </div>
+                    <div class="support-field">
+                        <label for="contact-message">Description</label>
+                        <textarea id="contact-message" name="description" rows="5" placeholder="Please provide details about the issue..." required></textarea>
+                    </div>
+                    <div class="support-field">
+                        <span class="support-label">Attach Photo <small>(Optional)</small></span>
+                        <label class="upload-box" for="contact-photo">
+                            <i class="fa-solid fa-camera" aria-hidden="true"></i>
+                            <span><strong>Upload a file</strong><small>PNG, JPG, GIF up to 5MB</small></span>
+                            <input type="file" id="contact-photo" name="photo" accept="image/png,image/jpeg,image/gif">
+                        </label>
+                        <span class="file-name" id="file-name" aria-live="polite"></span>
+                    </div>
+                    <button type="submit" class="support-submit">Submit Report <span aria-hidden="true">▷</span></button>
+                    <p class="report-feedback" id="report-feedback" role="status" aria-live="polite"></p>
+                </form>
             </div>
         </section>
     </main>
@@ -75,8 +84,8 @@
     <footer id="footer" class="footer">
         <div class="container footer__container">
             <div class="footer__brand"><h3 class="footer__logo">Burgerhaus & Café</h3><p>Horario: Lun - Dom, 12:00pm - 11:00pm</p></div>
-            <div class="footer__links"><h4>Navegación</h4><ul><li><a href="#">Políticas de Privacidad</a></li><li><a href="#">Términos de Servicio</a></li><li><a href="#">Preguntas Frecuentes</a></li></ul></div>
-            <div class="footer__social"><h4>Síguenos</h4><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a></div>
+            <div class="footer__links"><h4>NAVEGACIÓN</h4><ul><li><a href="#">Políticas de Privacidad</a></li><li><a href="#">Términos de Servicio</a></li><li><a href="#">Preguntas Frecuentes</a></li></ul></div>
+            <div class="footer__social"><h4>SÍGUENOS</h4><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a></div>
         </div>
         <div class="footer__bottom"><p>&copy; 2026 Burgerhaus & Café. Todos los derechos reservados.</p></div>
     </footer>

@@ -25,6 +25,7 @@
                     <li><a href="../index.html#menu" class="nav__link">Menú</a></li>
                     <li><a href="../Rastreo de pedido/rastreo.html" class="nav__link">Rastrear Pedido</a></li>
                     <li><a href="../Contacto/contacto.html" class="nav__link">Contacto</a></li>
+                    <li><a href="../Usuario/login.html" class="nav__link nav__login">Iniciar Sesión</a></li>
                 </ul>
             </nav>
             <div class="header__actions">
@@ -41,22 +42,28 @@
             <div class="container product-detail__container">
                 <!-- El contenido se cargará con JS, aquí un ejemplo estático -->
                 <div class="product-detail__image-container">
-                    <img src="https://images.unsplash.com/photo-1571091711176-f750be92f6e4?q=80&w=800" alt="The Haus Double" class="product-detail__image">
+                    <img
+                        src="../assets/images/the-haus-double.jpg"
+                        data-fallback-src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=800"
+                        onerror="this.onerror=null; this.src=this.dataset.fallbackSrc;"
+                        alt="The Haus Double"
+                        class="product-detail__image"
+                        decoding="async">
                 </div>
                 <div class="product-detail__info">
                     <h1 class="product-detail__name">The Haus Double</h1>
                     <p class="product-detail__desc">Doble carne de res jugosa, queso cheddar americano derretido, lechuga fresca, rodajas de tomate maduro y nuestra inconfundible salsa secreta en un pan brioche tostado.</p>
-                    <span class="product-detail__price">Bs. 90.00</span>
+                    <span class="product-detail__price" id="product-detail-total">Bs. 90.00</span>
 
                     <div class="customizations">
                         <h3 class="customizations__title">Personaliza tu Hamburguesa</h3>
                         <div class="custom__group">
                             <label class="custom__label">
-                                <input type="checkbox" name="extra" value="bacon">
+                                <input type="checkbox" name="extra" value="bacon" data-name="Bacon" data-price="10">
                                 <span class="custom__text">Añadir Bacon (+Bs. 10)</span>
                             </label>
                             <label class="custom__label">
-                                <input type="checkbox" name="extra" value="avocado">
+                                <input type="checkbox" name="extra" value="avocado" data-name="Aguacate" data-price="8">
                                 <span class="custom__text">Añadir Aguacate (+Bs. 8)</span>
                             </label>
                             <label class="custom__label">
@@ -68,11 +75,11 @@
 
                     <div class="product-detail__actions">
                         <div class="quantity-selector">
-                            <button class="quantity-btn">-</button>
-                            <span class="quantity-value">1</span>
-                            <button class="quantity-btn">+</button>
+                            <button class="quantity-btn product-detail__qty-btn" data-action="decrease" aria-label="Disminuir cantidad">-</button>
+                            <span class="quantity-value" id="product-detail-quantity">1</span>
+                            <button class="quantity-btn product-detail__qty-btn" data-action="increase" aria-label="Aumentar cantidad">+</button>
                         </div>
-                        <button class="btn btn--primary btn--full">Añadir al Pedido</button>
+                        <button class="btn btn--primary btn--full" id="product-detail-add-to-cart" data-id="1">Añadir al Pedido</button>
                     </div>
                 </div>
             </div>
@@ -82,8 +89,8 @@
     <footer id="footer" class="footer">
         <div class="container footer__container">
             <div class="footer__brand"><h3 class="footer__logo">Burgerhaus & Café</h3><p>Horario: Lun - Dom, 12:00pm - 11:00pm</p></div>
-            <div class="footer__links"><h4>Navegación</h4><ul><li><a href="#">Políticas de Privacidad</a></li><li><a href="#">Términos de Servicio</a></li><li><a href="#">Preguntas Frecuentes</a></li></ul></div>
-            <div class="footer__social"><h4>Síguenos</h4><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a></div>
+            <div class="footer__links"><h4>NAVEGACIÓN</h4><ul><li><a href="#">Políticas de Privacidad</a></li><li><a href="#">Términos de Servicio</a></li><li><a href="#">Preguntas Frecuentes</a></li></ul></div>
+            <div class="footer__social"><h4>SÍGUENOS</h4><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a></div>
         </div>
         <div class="footer__bottom"><p>&copy; 2026 Burgerhaus & Café. Todos los derechos reservados.</p></div>
     </footer>

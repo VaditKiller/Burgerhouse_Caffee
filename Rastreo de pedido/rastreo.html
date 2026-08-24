@@ -8,7 +8,7 @@
     <!-- Google Fonts & Font Awesome -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Custom CSS & JS (Paths adjusted) -->
@@ -29,6 +29,7 @@
                     <li><a href="../index.html#menu" class="nav__link">Menú</a></li>
                     <li><a href="rastreo.html" class="nav__link">Rastrear Pedido</a></li>
                     <li><a href="../Contacto/contacto.html" class="nav__link">Contacto</a></li>
+                    <li><a href="../Usuario/login.html" class="nav__link nav__login">Iniciar Sesión</a></li>
                 </ul>
             </nav>
             <div class="header__actions">
@@ -41,32 +42,47 @@
     </header>
 
     <main>
-        <!-- ==================== TRACK ORDER SECTION ==================== --> 
         <section id="track" class="track-section">
-            <div class="container">
-                <h2 class="section__title">Rastrea tu Pedido</h2>
-                <div class="track__container">
-                    <div class="track__input">
-                        <input type="text" id="order-id-input" placeholder="Ingresa tu número de orden">
-                        <button class="btn btn--primary" id="track-order-btn">Consultar</button>
+            <div class="track-shell">
+                <div class="track-heading">
+                    <div>
+                        <p class="eyebrow">Seguimiento en vivo</p>
+                        <h1>Order <span>#<span id="display-order-id">1024</span></span></h1>
+                        <p class="track-subtitle">Tu pedido está avanzando. Te avisaremos cuando esté en camino.</p>
                     </div>
-                    <div class="track__status" id="track-status-container" style="display: none;">
-                        <p>Estado del pedido #<strong id="display-order-id"></strong>:</p>
-                        <div class="stepper">
-                            <div class="step" data-step="1"><div class="step__circle">1</div><span>Pedido Recibido</span></div>
-                            <div class="step" data-step="2"><div class="step__circle">2</div><span>En Preparación</span></div>
-                            <div class="step" data-step="3"><div class="step__circle">3</div><span>En Camino</span></div>
-                            <div class="step" data-step="4"><div class="step__circle">4</div><span>Entregado</span></div>
-                            <div class="stepper__progress" id="stepper-progress"></div>
+                    <div class="estimated-time" aria-live="polite">
+                        <span>Tiempo estimado</span>
+                        <strong class="timer-display">14 : 20</strong>
+                    </div>
+                </div>
+
+                <div class="status-card" id="track-status-container">
+                    <div class="status-card__top"><span class="status-dot"></span><strong id="current-status">Preparing your order</strong><span class="status-note">Almost there!</span></div>
+                    <div class="stepper" aria-label="Estado del pedido">
+                        <div class="step completed" data-step="1"><div class="step__circle"><i class="fa-solid fa-check"></i></div><span>Order Received</span></div>
+                        <div class="step active" data-step="2"><div class="step__circle"><i class="fa-solid fa-fire-burner"></i></div><span>Preparing</span></div>
+                        <div class="step" data-step="3"><div class="step__circle"><i class="fa-solid fa-motorcycle"></i></div><span>On the Way</span></div>
+                        <div class="step" data-step="4"><div class="step__circle"><i class="fa-solid fa-house"></i></div><span>Delivered</span></div>
+                        <div class="stepper__track"></div>
+                        <div class="stepper__progress" id="stepper-progress"></div>
+                    </div>
+                </div>
+
+                <div class="order-grid">
+                    <article class="order-card summary-card">
+                        <div class="card-heading"><div><p class="eyebrow">Lo que elegiste</p><h2>Order Summary</h2></div><span class="item-count">3 items</span></div>
+                        <div class="order-items">
+                            <div class="order-item"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=240" alt="The Haus Double" loading="lazy" decoding="async"><div><h3>The Haus Double</h3><p>Double patty · Cheddar · Haus sauce</p><span>Qty 1</span></div><strong>Bs. 90.00</strong></div>
+                            <div class="order-item"><img src="https://images.unsplash.com/photo-1576107232684-1279f390859f?q=80&w=240" alt="Curly Fries" loading="lazy" decoding="async"><div><h3>Curly Fries</h3><p>Classic seasoning · Ketchup</p><span>Qty 1</span></div><strong>Bs. 35.00</strong></div>
+                            <div class="order-item"><img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?q=80&w=240" alt="Coca-Cola" loading="lazy" decoding="async"><div><h3>Coca-Cola</h3><p>Cold · 500 ml</p><span>Qty 1</span></div><strong>Bs. 15.00</strong></div>
                         </div>
-                    </div>
-                    <div class="countdown-timer animate-on-scroll" id="countdown-timer">
-                        <p>Tiempo estimado de entrega:</p>
-                        <span class="timer-display">30:00</span>
-                    </div>
-                    <div class="map-container animate-on-scroll">
-                        <h3 class="map-title">Tu pedido está en camino</h3>
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3770.835467406456!2d-63.18491022572166!3d-17.38920198363768!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x93f502010834164f%3A0x1536b00868211990!2sBurger%20King!5e0!3m2!1ses-419!2sbo!4v1701890000000!5m2!1ses-419!2sbo" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <div class="order-total"><span>Total</span><strong>Bs. 154.00</strong></div>
+                    </article>
+
+                    <div class="details-column">
+                        <article class="order-card info-card"><div class="info-icon"><i class="fa-regular fa-user"></i></div><div><p class="eyebrow">Tus datos</p><h2>Customer Info</h2><p>Valentina Sabrina</p><a href="mailto:valentina@example.com">valentina@example.com</a></div></article>
+                        <article class="order-card info-card"><div class="info-icon"><i class="fa-solid fa-location-dot"></i></div><div><p class="eyebrow">Entregar en</p><h2>Delivery Address</h2><p>Av. Principal #1024, Zona Norte</p><span>Santa Cruz de la Sierra, Bolivia</span></div></article>
+                        <div class="track-lookup"><label for="order-id-input">¿Buscas otro pedido?</label><div><input type="text" id="order-id-input" placeholder="Order number"><button class="btn btn--primary" id="track-order-btn">Consultar</button></div></div>
                     </div>
                 </div>
             </div>
@@ -77,8 +93,8 @@
     <footer id="footer" class="footer">
         <div class="container footer__container">
             <div class="footer__brand"><h3 class="footer__logo">Burgerhaus & Café</h3><p>Horario: Lun - Dom, 12:00pm - 11:00pm</p></div>
-            <div class="footer__links"><h4>Navegación</h4><ul><li><a href="#">Políticas de Privacidad</a></li><li><a href="#">Términos de Servicio</a></li><li><a href="#">Preguntas Frecuentes</a></li></ul></div>
-            <div class="footer__social"><h4>Síguenos</h4><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a></div>
+            <div class="footer__links"><h4>NAVEGACIÓN</h4><ul><li><a href="#">Políticas de Privacidad</a></li><li><a href="#">Términos de Servicio</a></li><li><a href="#">Preguntas Frecuentes</a></li></ul></div>
+            <div class="footer__social"><h4>SÍGUENOS</h4><a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a><a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a><a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a></div>
         </div>
         <div class="footer__bottom"><p>&copy; 2026 Burgerhaus & Café. Todos los derechos reservados.</p></div>
     </footer>
