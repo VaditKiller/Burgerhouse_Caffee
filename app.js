@@ -213,8 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
         state.cart = [];
         renderCart();
         showToast(`Pedido #${orderId} confirmado. ¡Gracias por tu compra!`);
-        // Redirigir a la página de rastreo. Se usa una ruta relativa a la raíz ('/').
-        // Esto requiere que el sitio se ejecute en un servidor web (ej. Live Server de VS Code).
         window.location.href = `/Rastreo de pedido/rastreo.html?orderId=${orderId}`;
     };
 
@@ -557,4 +555,43 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     init();
+});
+
+// ==========================================
+// FUNCIONES DEL MODAL DE CHECKOUT
+// ==========================================
+function openModal() {
+    const modal = document.getElementById('checkout-modal');
+    modal.removeAttribute('hidden');
+    
+    // Enfocar el primer elemento interactivo
+    const firstInput = modal.querySelector('input');
+    if (firstInput) firstInput.focus();
+}
+
+function closeModal() {
+    document.getElementById('checkout-modal').setAttribute('hidden', 'true');
+    // Retornar el foco al botón que abrió el modal
+    const cartToggleBtn = document.getElementById('cart-toggle-btn');
+    if (cartToggleBtn) cartToggleBtn.focus();
+}
+
+// ==========================================
+// EVENTOS PARA ACTIVAR EL MODAL
+// ==========================================
+// Esperamos a que todo el HTML cargue para asignar los clics
+document.addEventListener('DOMContentLoaded', () => {
+    
+    // 1. Botón para CERRAR el modal (La "X" que pusiste en el HTML)
+    const closeCheckoutBtn = document.getElementById('close-checkout');
+    if (closeCheckoutBtn) {
+        closeCheckoutBtn.addEventListener('click', closeModal);
+    }
+
+    // 2. Botón para ABRIR el modal (El botón de "Confirmar pedido" o "Pagar" que está dentro de tu carrito)
+    // OJO: Cambia 'id-de-tu-boton-pagar' por el ID real del botón que está en tu carrito
+    const btnPagarCarrito = document.getElementById('id-de-tu-boton-pagar'); 
+    if (btnPagarCarrito) {
+        btnPagarCarrito.addEventListener('click', openModal);
+    }
 });
