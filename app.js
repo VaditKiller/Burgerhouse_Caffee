@@ -1,137 +1,166 @@
 document.addEventListener('DOMContentLoaded', () => {
     
-    // VARIABLES GLOBALES
+    // Variables globales
     let carrito = [];
     
-    const botonesAdd = document.querySelectorAll('.btn-add:not(#btn-proceder-pago)');
+    const botonesAdd = document.querySelectorAll('.btn-add');
     const badgeCarrito = document.querySelector('.cart-badge');
     const contenedorItems = document.getElementById('cart-items-container');
     const totalElemento = document.getElementById('cart-total');
     
-    const btnAbrirCarrito = document.getElementById('cart-toggle-btn');
-    const btnCerrarCarrito = document.getElementById('close-cart-btn');
+    const btnToggleCarrito = document.getElementById('cart-toggle-btn');
     const cajonCarrito = document.getElementById('cart-drawer');
-
-    const modalCheckout = document.getElementById('checkout-modal');
-    const btnAbrirModal = document.getElementById('btn-proceder-pago');
+    const btnCerrarCajon = document.querySelector('.cart-drawer__close');
+    
+    const btnMenu = document.getElementById('hamburger-btn');
+    
+    const btnCheckout = document.getElementById('checkout-btn');
+    const modalCheckout = document.getElementById('checkout-modal'); // Elemento <dialog> nativo
     const btnCerrarModal = document.getElementById('close-checkout');
-
-    const btnMenuMovil = document.getElementById('mobile-menu-btn');
-    const navMenu = document.getElementById('main-nav');
+    const checkoutForm = document.getElementById('checkout-form');
+    const errorContainer = document.getElementById('form-errors');
 
     // ==========================================
-    // 1. MENÚ MÓVIL ACCESIBLE
+    // P2: ESTADO ACCESIBLE DEL MENÚ MÓVIL
     // ==========================================
-    if (btnMenuMovil && navMenu) {
-        btnMenuMovil.addEventListener('click', () => {
-            const isExpanded = btnMenuMovil.getAttribute('aria-expanded') === 'true';
-            btnMenuMovil.setAttribute('aria-expanded', !isExpanded);
+    if (btnMenu) {
+        btnMenu.addEventListener('click', () => {
+            const expandido = btnMenu.getAttribute('aria-expanded') === 'true';
+            btnMenu.setAttribute('aria-expanded', !expandido);
+            btnMenu.setAttribute('aria-label', expandido ? 'Abrir menú de navegación' : 'Cerrar menú de navegación');
             
-            if (isExpanded) {
-                navMenu.setAttribute('hidden', 'true');
+            // Asume que tienes una clase .active o similar en tu CSS original
+            btnMenu.classList.toggle('active'); 
+            document.querySelector('.nav').classList.toggle('active');
+        });
+    }
+
+    // ==========================================
+    // P1: ABRIR/CERRAR CARRITO (Gestión de estado)
+    // ==========================================
+    if (btnToggleCarrito && cajonCarrito) {
+        btnToggleCarrito.addEventListener('click', () => {
+            // Asume que tu CSS original usa la clase .open
+            cajonCarrito.classList.add('open'); 
+            btnToggleCarrito.setAttribute('aria-expanded', 'true');
+        });
+    }
+    
+    if (btnCerrarCajon) {
+        btnCerrarCajon.addEventListener('click', () => {
+            cajonCarrito.classList.remove('open');
+            btnToggleCarrito.setAttribute('aria-expanded', 'false');
+            btnToggleCarrito.focus(); // Retorna el foco al botón que lo abrió
+        });
+    }
+
+    // ==========================================
+    // P1: MODAL DE CHECKOUT (Foco nativo con <dialog>)
+    // ==========================================
+    if (btnCheckout && modalCheckout) {
+        btnCheckout.addEventListener('click', () => {
+            if (carrito.length === 0) return alert("Agrega productos antes de pagar.");
+            
+            cajonCarrito.classList.remove('open'); // Cerrar panel lateral
+            
+            // showModal() es nativo de HTML5: atrapa el foco y crea el overlay de fondo
+            modalCheckout.showModal(); 
+        });
+    }
+
+    if (btnCerrarModal) {
+        btnCerrarModal.addEventListener('click', () => {
+            modalCheckout.close();
+            btnToggleCarrito.focus(); // Retorna foco
+        });
+    }
+
+    // ==========================================
+    // P3: VALIDACIÓN EXPLICATIVA DEL FORMULARIO
+    // ==========================================
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('user-name').value;
+            const phone = document.getElementById('user-phone').value;
+            const address = document.getElementById('address').value;
+
+            if (!name || !phone || !address) {
+                errorContainer.removeAttribute('hidden');
+                errorContainer.innerText = "Error: Por favor completa el nombre, teléfono y dirección obligatorios.";
+                // Mueve el foco al contenedor de error para que lo lea el asistente
+                errorContainer.setAttribute('tabindex', '-1');
+                errorContainer.focus();
             } else {
-                navMenu.removeAttribute('hidden');
+                errorContainer.setAttribute('hidden', 'true');
+                alert("¡Pedido registrado exitosamente!");
+                carrito = [];
+                actualizarCarrito();
+                modalCheckout.close();
             }
         });
     }
 
     // ==========================================
-    // 2. ABRIR / CERRAR CARRITO
-    // ==========================================
-    if (btnAbrirCarrito) {
-        btnAbrirCarrito.addEventListener('click', () => {
-            cajonCarrito.classList.add('open');
-            btnAbrirCarrito.setAttribute('aria-expanded', 'true');
-        });
-    }
-
-    if (btnCerrarCarrito) {
-        btnCerrarCarrito.addEventListener('click', () => {
-            cajonCarrito.classList.remove('open');
-            btnAbrirCarrito.setAttribute('aria-expanded', 'false');
-            btnAbrirCarrito.focus(); // Retorna el foco
-        });
-    }
-
-    // ==========================================
-    // 3. ABRIR / CERRAR MODAL DE PAGO
-    // ==========================================
-    function openModal() {
-        if(carrito.length === 0) return alert("Tu carrito está vacío");
-        
-        modalCheckout.removeAttribute('hidden');
-        cajonCarrito.classList.remove('open'); // Cierra el carrito
-        
-        // Foco al primer input
-        const firstInput = modalCheckout.querySelector('input');
-        if (firstInput) firstInput.focus();
-    }
-
-    function closeModal() {
-        modalCheckout.setAttribute('hidden', 'true');
-        btnAbrirCarrito.focus();
-    }
-
-    if (btnAbrirModal) btnAbrirModal.addEventListener('click', openModal);
-    if (btnCerrarModal) btnCerrarModal.addEventListener('click', closeModal);
-
-    // ==========================================
-    // 4. LÓGICA DE AÑADIR AL CARRITO
+    // LÓGICA DEL CARRITO Y P1 (CONTROLES)
     // ==========================================
     botonesAdd.forEach(boton => {
         boton.addEventListener('click', (e) => {
             const tarjeta = e.target.closest('.product-card');
             const titulo = tarjeta.querySelector('h3').innerText;
-            const precioTexto = tarjeta.querySelector('p').innerText.replace('Bs. ', '');
+            const precioTexto = tarjeta.querySelector('.price').innerText.replace('Bs. ', '');
             const precio = parseFloat(precioTexto);
 
-            const itemExistente = carrito.find(item => item.titulo === titulo);
-            if (itemExistente) {
-                itemExistente.cantidad++;
-            } else {
-                carrito.push({ titulo, precio, cantidad: 1 });
-            }
+            const existente = carrito.find(item => item.titulo === titulo);
+            if (existente) existente.cantidad++;
+            else carrito.push({ titulo, precio, cantidad: 1 });
+
             actualizarCarrito();
         });
     });
 
-    // ==========================================
-    // 5. ACTUALIZAR PANEL DEL CARRITO Y ACCESIBILIDAD
-    // ==========================================
     function actualizarCarrito() {
-        const totalProductos = carrito.reduce((acc, item) => acc + item.cantidad, 0);
-        
-        if (badgeCarrito) badgeCarrito.innerText = totalProductos;
-        if (btnAbrirCarrito) btnAbrirCarrito.setAttribute('aria-label', `Abrir carrito, ${totalProductos} productos`);
+        const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+        if (badgeCarrito) badgeCarrito.innerText = totalItems;
+        if (btnToggleCarrito) btnToggleCarrito.setAttribute('aria-label', `Abrir carrito, ${totalItems} productos`);
 
         if (carrito.length === 0) {
-            contenedorItems.innerHTML = '<p>Tu carrito está vacío.</p>';
-            if(totalElemento) totalElemento.innerText = 'Bs. 0.00';
+            contenedorItems.innerHTML = '<p class="cart__empty-msg">Tu carrito está vacío.</p>';
+            if(totalElemento) totalElemento.innerText = 'Bs. 15.00'; // Solo base de envío
             return;
         }
 
         contenedorItems.innerHTML = '';
-        let totalPrecio = 0;
+        let subtotal = 0;
 
         carrito.forEach((item, index) => {
-            totalPrecio += (item.precio * item.cantidad);
+            subtotal += (item.precio * item.cantidad);
             
-            // Inyectamos HTML con etiquetas ARIA corregidas para los controles del carrito
+            // P1: Botones generados dinámicamente con aria-label descriptivo y type="button"
             const div = document.createElement('div');
-            div.style.cssText = "display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid #ddd; padding-bottom:10px;";
+            div.className = 'cart-item';
             div.innerHTML = `
-                <div><strong>${item.titulo}</strong> <br> Bs. ${(item.precio * item.cantidad).toFixed(2)}</div>
-                <div style="display:flex; gap:10px; align-items:center;">
-                    <button type="button" class="btn-restar" data-index="${index}" aria-label="Disminuir cantidad de ${item.titulo}" style="padding:2px 8px;">−</button>
-                    <span>${item.cantidad}</span>
-                    <button type="button" class="btn-sumar" data-index="${index}" aria-label="Aumentar cantidad de ${item.titulo}" style="padding:2px 8px;">+</button>
-                    <button type="button" class="btn-eliminar" data-index="${index}" aria-label="Eliminar ${item.titulo}" style="color:red; font-weight:bold; border:none; background:none;">×</button>
+                <div class="cart-item-details">
+                    <span class="product-name" style="font-weight:600; display:block;">${item.titulo}</span>
+                    <span class="product-price">Bs. ${(item.precio * item.cantidad).toFixed(2)}</span>
+                </div>
+                <div class="controls" style="display:flex; align-items:center; gap:8px;">
+                    <button type="button" class="btn-restar" data-index="${index}" aria-label="Disminuir cantidad de ${item.titulo}">−</button>
+                    <span aria-hidden="true">${item.cantidad}</span>
+                    <button type="button" class="btn-sumar" data-index="${index}" aria-label="Aumentar cantidad de ${item.titulo}">+</button>
+                    <button type="button" class="btn-eliminar" data-index="${index}" aria-label="Eliminar ${item.titulo} del pedido" style="margin-left: 10px;">×</button>
                 </div>
             `;
             contenedorItems.appendChild(div);
         });
 
-        if(totalElemento) totalElemento.innerText = `Bs. ${totalPrecio.toFixed(2)}`;
+        // Cálculos estéticos basados en tu HTML original
+        const envio = 15;
+        const totalFinal = subtotal + envio;
+        document.getElementById('cart-subtotal').innerText = `Bs. ${subtotal.toFixed(2)}`;
+        document.getElementById('cart-total').innerText = `Bs. ${totalFinal.toFixed(2)}`;
+
         asignarEventosControles();
     }
 
@@ -142,43 +171,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 actualizarCarrito();
             });
         });
-
         document.querySelectorAll('.btn-restar').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const idx = e.target.dataset.index;
-                if (carrito[idx].cantidad > 1) {
-                    carrito[idx].cantidad--;
-                } else {
-                    carrito.splice(idx, 1);
-                }
+                if (carrito[idx].cantidad > 1) carrito[idx].cantidad--;
+                else carrito.splice(idx, 1);
                 actualizarCarrito();
             });
         });
-
         document.querySelectorAll('.btn-eliminar').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 carrito.splice(e.target.dataset.index, 1);
                 actualizarCarrito();
             });
-        });
-    }
-
-    // ==========================================
-    // 6. VALIDACIÓN DEL FORMULARIO DE CHECKOUT
-    // ==========================================
-    const checkoutForm = document.getElementById('checkout-form');
-    if (checkoutForm) {
-        checkoutForm.addEventListener('submit', function(e) {
-            e.preventDefault(); 
-            // Valida usando HTML5
-            if (!this.checkValidity()) {
-                alert("Por favor, completa todos los campos requeridos (*)");
-                return;
-            }
-            alert("¡Pedido realizado con éxito!");
-            carrito = []; // Vacía el carrito
-            actualizarCarrito();
-            closeModal();
         });
     }
 });
