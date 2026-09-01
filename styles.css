@@ -1,3 +1,8 @@
+/* EFECTO DE DESPLAZAMIENTO SUAVE HACIA EL FOOTER */
+html {
+    scroll-behavior: smooth;
+}
+
 :root {
     --primary-color: #e67e22;
     --primary-hover: #d35400;
@@ -42,11 +47,11 @@ a { color: var(--text-color); text-decoration: none; }
 .cart-icon { position: relative; }
 .cart-badge { position: absolute; top: -5px; right: -8px; background-color: var(--primary-color); color: #fff; font-size: 0.75rem; padding: 2px 6px; border-radius: 50%; }
 
-/* BOTÓN HAMBURGUESA (Oculto en escritorio, visible en móvil/tablet) */
+/* BOTÓN HAMBURGUESA */
 .hamburger { display: none; background: none; border: none; cursor: pointer; flex-direction: column; justify-content: space-between; width: 30px; height: 21px; padding: 0; z-index: 1001; }
 .hamburger span { display: block; width: 100%; height: 3px; background-color: var(--dark-color); border-radius: 3px; transition: all 0.3s ease; }
 
-/* MEDIA QUERIES PARA CELULARES Y TABLETS (Pantallas menores a 992px) */
+/* MEDIA QUERIES PARA CELULARES Y TABLETS (< 992px) */
 @media (max-width: 992px) {
     .hamburger { display: flex; }
     .desktop-only { display: none !important; }
@@ -65,7 +70,7 @@ a { color: var(--text-color); text-decoration: none; }
     }
 
     .nav.active {
-        max-height: 250px; /* Altura suficiente para mostrar los enlaces */
+        max-height: 250px;
     }
 
     .nav__list {
@@ -80,16 +85,9 @@ a { color: var(--text-color); text-decoration: none; }
     }
 }
 
-/* Animación de la X en el botón hamburguesa cuando está activo */
-.hamburger.active span:nth-child(1) {
-    transform: translateY(9px) rotate(45deg);
-}
-.hamburger.active span:nth-child(2) {
-    opacity: 0;
-}
-.hamburger.active span:nth-child(3) {
-    transform: translateY(-9px) rotate(-45deg);
-}
+.hamburger.active span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
 .hero { position: relative; height: 70vh; background: url('https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=1200') center/cover; display: flex; align-items: center; }
 .hero__overlay { position: absolute; width: 100%; height: 100%; background: rgba(0,0,0,0.6); }

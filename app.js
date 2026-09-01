@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnMenu.classList.toggle('active');
         });
 
-        // Cerrar menú al hacer clic en cualquier enlace interno
+        // Cerrar menú al hacer clic en cualquier enlace interno (incluido "Sobre Nosotros")
         document.querySelectorAll('.nav__link').forEach(link => {
             link.addEventListener('click', () => {
                 mainNav.classList.remove('active');
