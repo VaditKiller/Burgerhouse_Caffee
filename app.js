@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // Variables globales
     let carrito = [];
     
-    const botonesAdd = document.querySelectorAll('.btn-add');
+    // Elementos del DOM
+    const botonesAdd = document.querySelectorAll('.btn-add:not(#checkout-btn)');
     const badgeCarrito = document.querySelector('.cart-badge');
     const contenedorItems = document.getElementById('cart-items-container');
     const totalElemento = document.getElementById('cart-total');
@@ -13,34 +12,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnCerrarCajon = document.querySelector('.cart-drawer__close');
     
     const btnMenu = document.getElementById('hamburger-btn');
+    const btnThemeToggle = document.getElementById('theme-toggle-btn');
     
     const btnCheckout = document.getElementById('checkout-btn');
-    const modalCheckout = document.getElementById('checkout-modal'); // Elemento <dialog> nativo
+    const modalCheckout = document.getElementById('checkout-modal'); 
     const btnCerrarModal = document.getElementById('close-checkout');
     const checkoutForm = document.getElementById('checkout-form');
     const errorContainer = document.getElementById('form-errors');
 
     // ==========================================
-    // P2: ESTADO ACCESIBLE DEL MENÚ MÓVIL
+    // MODO OSCURO (Solución de error)
+    // ==========================================
+    if (btnThemeToggle) {
+        btnThemeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = btnThemeToggle.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+    }
+
+    // ==========================================
+    // MENÚ MÓVIL (P2)
     // ==========================================
     if (btnMenu) {
         btnMenu.addEventListener('click', () => {
             const expandido = btnMenu.getAttribute('aria-expanded') === 'true';
             btnMenu.setAttribute('aria-expanded', !expandido);
-            btnMenu.setAttribute('aria-label', expandido ? 'Abrir menú de navegación' : 'Cerrar menú de navegación');
-            
-            // Asume que tienes una clase .active o similar en tu CSS original
-            btnMenu.classList.toggle('active'); 
-            document.querySelector('.nav').classList.toggle('active');
+            document.getElementById('main-nav').classList.toggle('active');
         });
     }
 
     // ==========================================
-    // P1: ABRIR/CERRAR CARRITO (Gestión de estado)
+    // CARRITO LATERAL (P1 & Solución de visibilidad)
     // ==========================================
     if (btnToggleCarrito && cajonCarrito) {
         btnToggleCarrito.addEventListener('click', () => {
-            // Asume que tu CSS original usa la clase .open
             cajonCarrito.classList.add('open'); 
             btnToggleCarrito.setAttribute('aria-expanded', 'true');
         });
@@ -50,20 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
         btnCerrarCajon.addEventListener('click', () => {
             cajonCarrito.classList.remove('open');
             btnToggleCarrito.setAttribute('aria-expanded', 'false');
-            btnToggleCarrito.focus(); // Retorna el foco al botón que lo abrió
+            btnToggleCarrito.focus();
         });
     }
 
     // ==========================================
-    // P1: MODAL DE CHECKOUT (Foco nativo con <dialog>)
+    // MODAL CHECKOUT (P1)
     // ==========================================
     if (btnCheckout && modalCheckout) {
         btnCheckout.addEventListener('click', () => {
             if (carrito.length === 0) return alert("Agrega productos antes de pagar.");
-            
-            cajonCarrito.classList.remove('open'); // Cerrar panel lateral
-            
-            // showModal() es nativo de HTML5: atrapa el foco y crea el overlay de fondo
+            cajonCarrito.classList.remove('open');
             modalCheckout.showModal(); 
         });
     }
@@ -71,26 +80,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnCerrarModal) {
         btnCerrarModal.addEventListener('click', () => {
             modalCheckout.close();
-            btnToggleCarrito.focus(); // Retorna foco
+            btnToggleCarrito.focus();
         });
     }
 
     // ==========================================
-    // P3: VALIDACIÓN EXPLICATIVA DEL FORMULARIO
+    // VALIDACIÓN FORMULARIO (P3, P2)
     // ==========================================
     if (checkoutForm) {
         checkoutForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
-            const name = document.getElementById('user-name').value;
-            const phone = document.getElementById('user-phone').value;
-            const address = document.getElementById('address').value;
-
-            if (!name || !phone || !address) {
+            if (!checkoutForm.checkValidity()) {
                 errorContainer.removeAttribute('hidden');
-                errorContainer.innerText = "Error: Por favor completa el nombre, teléfono y dirección obligatorios.";
-                // Mueve el foco al contenedor de error para que lo lea el asistente
-                errorContainer.setAttribute('tabindex', '-1');
+                errorContainer.innerText = "Error: Por favor completa los campos obligatorios.";
                 errorContainer.focus();
             } else {
                 errorContainer.setAttribute('hidden', 'true');
@@ -103,7 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // LÓGICA DEL CARRITO Y P1 (CONTROLES)
+    // LÓGICA DE AÑADIR PRODUCTOS (P3, P1)
     // ==========================================
     botonesAdd.forEach(boton => {
         boton.addEventListener('click', (e) => {
@@ -127,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (carrito.length === 0) {
             contenedorItems.innerHTML = '<p class="cart__empty-msg">Tu carrito está vacío.</p>';
-            if(totalElemento) totalElemento.innerText = 'Bs. 15.00'; // Solo base de envío
+            if(totalElemento) totalElemento.innerText = 'Bs. 0.00';
             return;
         }
 
@@ -136,54 +138,43 @@ document.addEventListener('DOMContentLoaded', () => {
 
         carrito.forEach((item, index) => {
             subtotal += (item.precio * item.cantidad);
-            
-            // P1: Botones generados dinámicamente con aria-label descriptivo y type="button"
             const div = document.createElement('div');
             div.className = 'cart-item';
             div.innerHTML = `
-                <div class="cart-item-details">
-                    <span class="product-name" style="font-weight:600; display:block;">${item.titulo}</span>
-                    <span class="product-price">Bs. ${(item.precio * item.cantidad).toFixed(2)}</span>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                    <span style="font-weight:bold;">${item.titulo}</span>
+                    <span>Bs. ${(item.precio * item.cantidad).toFixed(2)}</span>
                 </div>
-                <div class="controls" style="display:flex; align-items:center; gap:8px;">
-                    <button type="button" class="btn-restar" data-index="${index}" aria-label="Disminuir cantidad de ${item.titulo}">−</button>
+                <div style="display:flex; gap:10px; align-items:center;">
+                    <button type="button" class="btn-restar" data-index="${index}" aria-label="Disminuir ${item.titulo}">−</button>
                     <span aria-hidden="true">${item.cantidad}</span>
-                    <button type="button" class="btn-sumar" data-index="${index}" aria-label="Aumentar cantidad de ${item.titulo}">+</button>
-                    <button type="button" class="btn-eliminar" data-index="${index}" aria-label="Eliminar ${item.titulo} del pedido" style="margin-left: 10px;">×</button>
+                    <button type="button" class="btn-sumar" data-index="${index}" aria-label="Aumentar ${item.titulo}">+</button>
+                    <button type="button" class="btn-eliminar" data-index="${index}" aria-label="Eliminar ${item.titulo}" style="color:red; border:none; margin-left:auto;">×</button>
                 </div>
             `;
             contenedorItems.appendChild(div);
         });
 
-        // Cálculos estéticos basados en tu HTML original
-        const envio = 15;
-        const totalFinal = subtotal + envio;
         document.getElementById('cart-subtotal').innerText = `Bs. ${subtotal.toFixed(2)}`;
-        document.getElementById('cart-total').innerText = `Bs. ${totalFinal.toFixed(2)}`;
+        document.getElementById('cart-total').innerText = `Bs. ${(subtotal + 15).toFixed(2)}`; // + 15 de envío
 
         asignarEventosControles();
     }
 
     function asignarEventosControles() {
-        document.querySelectorAll('.btn-sumar').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                carrito[e.target.dataset.index].cantidad++;
-                actualizarCarrito();
-            });
-        });
-        document.querySelectorAll('.btn-restar').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const idx = e.target.dataset.index;
-                if (carrito[idx].cantidad > 1) carrito[idx].cantidad--;
-                else carrito.splice(idx, 1);
-                actualizarCarrito();
-            });
-        });
-        document.querySelectorAll('.btn-eliminar').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                carrito.splice(e.target.dataset.index, 1);
-                actualizarCarrito();
-            });
-        });
+        document.querySelectorAll('.btn-sumar').forEach(btn => btn.addEventListener('click', (e) => {
+            carrito[e.target.dataset.index].cantidad++;
+            actualizarCarrito();
+        }));
+        document.querySelectorAll('.btn-restar').forEach(btn => btn.addEventListener('click', (e) => {
+            const idx = e.target.dataset.index;
+            if (carrito[idx].cantidad > 1) carrito[idx].cantidad--;
+            else carrito.splice(idx, 1);
+            actualizarCarrito();
+        }));
+        document.querySelectorAll('.btn-eliminar').forEach(btn => btn.addEventListener('click', (e) => {
+            carrito.splice(e.target.dataset.index, 1);
+            actualizarCarrito();
+        }));
     }
 });
