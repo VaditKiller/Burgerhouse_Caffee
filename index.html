@@ -10,6 +10,9 @@
 </head>
 <body>
 
+    <!-- CONTENEDOR DE NOTIFICACIONES FLOTANTES -->
+    <div id="notification-container"></div>
+
     <!-- CABECERA -->
     <header class="header">
         <div class="container header__container">
@@ -19,7 +22,6 @@
                 <ul class="nav__list">
                     <li><a href="#" class="nav__link">Inicio</a></li>
                     <li><a href="#menu" class="nav__link">Menú</a></li>
-                    <!-- REDIRIGE AL FOOTER (A LA SECCIÓN DE REDES) -->
                     <li><a href="#redes-sociales" class="nav__link">Sobre Nosotros</a></li>
                 </ul>
             </nav>
@@ -50,7 +52,7 @@
             <p class="hero__subtitle">Donde cada ingrediente cuenta una historia de sabor y calidad.</p>
             <div class="hero__cta">
                 <a href="#menu" class="btn btn--primary">Ver Menú</a>
-                <button type="button" class="btn btn--outline">Ordenar Ahora</button>
+                <button type="button" class="btn btn--outline" id="hero-order-btn">Ordenar Ahora</button>
             </div>
         </div>
     </section>
@@ -151,7 +153,7 @@
         </div>
     </section>
 
-    <!-- FOOTER (CON ID "redes-sociales" EN LA SECCIÓN DE REDES) -->
+    <!-- FOOTER -->
     <footer class="footer">
         <div class="footer__container">
             <div class="footer__section">
@@ -191,10 +193,10 @@
         </div>
         <div class="qty-section">
             <h4 style="margin-bottom: 0.5rem; margin-top: 1rem; color: var(--primary-color);">Cantidad:</h4>
-            <div class="qty-control">
-                <button type="button" id="info-btn-restar">−</button>
-                <span id="info-cantidad">1</span>
-                <button type="button" id="info-btn-sumar">+</button>
+            <div class="qty-control" style="display: flex; gap: 15px; align-items: center;">
+                <button type="button" id="info-btn-restar" class="btn btn--secondary" style="padding: 5px 15px;">−</button>
+                <span id="info-cantidad" style="font-weight: bold; font-size: 1.1rem;">1</span>
+                <button type="button" id="info-btn-sumar" class="btn btn--secondary" style="padding: 5px 15px;">+</button>
             </div>
         </div>
         <button type="button" id="info-add-btn" class="btn btn--primary btn--full" style="margin-top: 1rem;">
@@ -212,6 +214,8 @@
             <p class="cart__empty-msg">Tu carrito está vacío.</p>
         </div>
         <div class="cart-drawer__footer">
+            <!-- Mensaje de error en rojo para carrito vacío -->
+            <p id="cart-error-msg" class="error-msg hidden">¡Error: El carrito está vacío! Agrega productos antes de comprar.</p>
             <div class="summary__row"><span>Subtotal:</span> <span id="cart-subtotal">Bs. 0.00</span></div>
             <div class="summary__row"><span>Envío:</span> <span>Bs. 15.00</span></div>
             <div class="summary__row total"><span>Total:</span> <span id="cart-total">Bs. 0.00</span></div>

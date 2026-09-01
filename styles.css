@@ -1,4 +1,4 @@
-/* EFECTO DE DESPLAZAMIENTO SUAVE HACIA EL FOOTER */
+/* EFECTO DE DESPLAZAMIENTO SUAVE */
 html {
     scroll-behavior: smooth;
 }
@@ -11,8 +11,22 @@ html {
     --text-color: #333333;
     --white: #ffffff;
     --border-color: #eeeeee;
+    --danger-color: #eb5757;
+    --success-color: #27ae60;
 }
 
+/* MODO OSCURO AUTOMÁTICO (Según el navegador o sistema del celular) */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --light-bg: #121212;
+        --white: #1e1e1e;
+        --text-color: #e0e0e0;
+        --dark-color: #ffffff;
+        --border-color: #333333;
+    }
+}
+
+/* Modo oscuro manual mediante la clase .dark-mode */
 body.dark-mode {
     --light-bg: #121212;
     --white: #1e1e1e;
@@ -32,6 +46,7 @@ a { color: var(--text-color); text-decoration: none; }
 .btn--outline { background-color: transparent; color: #fff; border: 2px solid #fff; }
 .btn--outline:hover { background-color: #fff; color: #2c3e50; }
 .btn--secondary { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-color); }
+.btn--secondary:hover { background-color: var(--border-color); }
 .btn--full { width: 100%; }
 
 .header { background-color: var(--white); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; padding: 15px 0; }
@@ -126,6 +141,40 @@ dialog.modal::backdrop { background-color: rgba(0, 0, 0, 0.7); }
 .form__group { margin-bottom: 1.2rem; text-align: left; }
 .form__group label { display: block; margin-bottom: 5px; font-weight: 600; }
 .form__group input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background-color: var(--light-bg); color: var(--text-color); }
+
+/* UTILIDADES Y ERRORES */
+.hidden { display: none !important; }
+.error-msg { color: var(--danger-color) !important; font-weight: bold; font-size: 0.9em; margin-bottom: 12px; }
+
+/* NOTIFICACIONES FLOTANTES */
+#notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 3000;
+}
+
+.notification {
+    background-color: var(--success-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    font-weight: bold;
+    animation: fadeInOut 3s forwards;
+}
+
+.notification.error {
+    background-color: var(--danger-color);
+}
+
+@keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(-10px); }
+    15% { opacity: 1; transform: translateY(0); }
+    85% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-10px); }
+}
 
 .footer { background-color: var(--white); padding: 3rem 0 1rem; border-top: 1px solid var(--border-color); margin-top: 4rem; text-align: center; }
 .footer__container { display: flex; flex-wrap: wrap; justify-content: center; gap: 3rem; width: 90%; max-width: 1200px; margin: 0 auto; }

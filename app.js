@@ -2,6 +2,41 @@ document.addEventListener('DOMContentLoaded', () => {
     let carrito = [];
     
     // ==========================================
+    // NOTIFICACIONES FLOTANTES
+    // ==========================================
+    function showNotification(message, isError = false) {
+        const container = document.getElementById('notification-container');
+        if (!container) return;
+
+        const notif = document.createElement('div');
+        notif.className = 'notification' + (isError ? ' error' : '');
+        notif.textContent = message;
+        container.appendChild(notif);
+
+        setTimeout(() => {
+            notif.remove();
+        }, 3000);
+    }
+
+    // ==========================================
+    // MODO OSCURO MANUAL Y AUTOMÁTICO
+    // ==========================================
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            const icon = themeToggleBtn.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+    }
+
+    // ==========================================
     // MENÚ HAMBURGUESA RESPONSIVO (MÓVIL / TABLET)
     // ==========================================
     const btnMenu = document.getElementById('hamburger-btn');
@@ -13,7 +48,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btnMenu.classList.toggle('active');
         });
 
-        // Cerrar menú al hacer clic en cualquier enlace interno (incluido "Sobre Nosotros")
         document.querySelectorAll('.nav__link').forEach(link => {
             link.addEventListener('click', () => {
                 mainNav.classList.remove('active');
@@ -23,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // FILTROS DEL MENÚ (SECCIÓN "TODO" MUESTRA TODO)
+    // FILTROS DEL MENÚ
     // ==========================================
     const filterButtons = document.querySelectorAll('.filter-btn');
     const productCards = document.querySelectorAll('.product-card');
@@ -54,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const cajonCarrito = document.getElementById('cart-drawer');
     const contenedorItems = document.getElementById('cart-items-container');
     const totalElemento = document.getElementById('cart-total');
+    const cartErrorMsg = document.getElementById('cart-error-msg');
 
     // Añadir directo desde la tarjeta
     document.querySelectorAll('.btn-add').forEach(boton => {
@@ -62,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const titulo = tarjeta.querySelector('h3').innerText;
             const precioTexto = tarjeta.querySelector('.price').innerText.replace('Bs. ', '');
             agregarAlCarrito(titulo, parseFloat(precioTexto), 1);
+            showNotification(`¡${titulo} agregado al carrito!`);
         });
     });
 
@@ -83,6 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Si hay productos, ocultar mensaje de error si estaba visible
+        if (cartErrorMsg) cartErrorMsg.classList.add('hidden');
+
         contenedorItems.innerHTML = '';
         let subtotal = 0;
 
@@ -97,9 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>Bs. ${(item.precio * item.cantidad).toFixed(2)}</span>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <button type="button" class="btn-restar" data-index="${index}" style="padding:2px 8px; cursor:pointer;">−</button>
+                    <button type="button" class="btn-restar btn btn--secondary" data-index="${index}" style="padding:2px 8px; cursor:pointer;">−</button>
                     <span>${item.cantidad}</span>
-                    <button type="button" class="btn-sumar" data-index="${index}" style="padding:2px 8px; cursor:pointer;">+</button>
+                    <button type="button" class="btn-sumar btn btn--secondary" data-index="${index}" style="padding:2px 8px; cursor:pointer;">+</button>
                     <button type="button" class="btn-eliminar" data-index="${index}" style="color:red; background:none; border:none; margin-left:auto; font-weight:bold; cursor:pointer;">×</button>
                 </div>
             `;
@@ -128,96 +167,161 @@ document.addEventListener('DOMContentLoaded', () => {
         }));
     }
 
-    btnToggleCarrito.addEventListener('click', () => cajonCarrito.classList.add('open'));
-    document.querySelector('.cart-drawer__close').addEventListener('click', () => cajonCarrito.classList.remove('open'));
+    if (btnToggleCarrito && cajonCarrito) {
+        btnToggleCarrito.addEventListener('click', () => cajonCarrito.classList.add('open'));
+        document.querySelector('.cart-drawer__close').addEventListener('click', () => cajonCarrito.classList.remove('open'));
+    }
 
-    // Checkout & Tracking
+    // Checkout & Tracking con Validación de Carrito Vacío
     const modalCheckout = document.getElementById('checkout-modal');
     const checkoutForm = document.getElementById('checkout-form');
     const modalTracking = document.getElementById('tracking-modal');
+    const checkoutBtn = document.getElementById('checkout-btn');
 
-    document.getElementById('checkout-btn').addEventListener('click', () => {
-        if (carrito.length === 0) return alert("Agrega productos antes de pagar.");
-        cajonCarrito.classList.remove('open');
-        modalCheckout.showModal();
-    });
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            if (carrito.length === 0) {
+                // Mostrar error en color rojo y notificación flotante roja
+                if (cartErrorMsg) cartErrorMsg.classList.remove('hidden');
+                showNotification('¡Error: El carrito está vacío!', true);
+                return;
+            }
+            if (cartErrorMsg) cartErrorMsg.classList.add('hidden');
+            cajonCarrito.classList.remove('open');
+            modalCheckout.showModal();
+        });
+    }
 
-    document.getElementById('close-checkout').addEventListener('click', () => modalCheckout.close());
-    document.getElementById('close-tracking').addEventListener('click', () => modalTracking.close());
+    const closeCheckout = document.getElementById('close-checkout');
+    const closeTracking = document.getElementById('close-tracking');
+    if (closeCheckout) closeCheckout.addEventListener('click', () => modalCheckout.close());
+    if (closeTracking) closeTracking.addEventListener('click', () => modalTracking.close());
 
-    checkoutForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        modalCheckout.close();
-        const randomCode = Math.floor(1000 + Math.random() * 9000);
-        document.getElementById('track-code').innerText = `#${randomCode}`;
-        modalTracking.showModal();
-        carrito = [];
-        actualizarCarrito();
-        checkoutForm.reset();
-    });
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            modalCheckout.close();
+            const randomCode = Math.floor(1000 + Math.random() * 9000);
+            document.getElementById('track-code').innerText = `#${randomCode}`;
+            modalTracking.showModal();
+            showNotification('¡Compra exitosa! Gracias por tu pedido.');
+            carrito = [];
+            actualizarCarrito();
+            checkoutForm.reset();
+        });
+    }
 
     // Modal Info Producto con Extras y Cantidades
     const modalInfo = document.getElementById('info-modal');
-    let currentProduct = null, currentBasePrice = 0, currentQty = 1;
+    const closeInfoBtn = document.getElementById('close-info');
+    let currentProduct = null;
+    let currentBasePrice = 0;
+    let currentQty = 1;
     const checkboxesExtras = document.querySelectorAll('.extra-checkbox');
 
     document.querySelectorAll('.btn-info').forEach(boton => {
         boton.addEventListener('click', (e) => {
-            const tarjeta = e.target.closest('.product-card');
-            currentProduct = tarjeta.querySelector('h3').innerText;
-            currentBasePrice = parseFloat(tarjeta.querySelector('.price').innerText.replace('Bs. ', ''));
-            document.getElementById('info-title').innerText = currentProduct;
-            document.getElementById('info-desc').innerText = tarjeta.getAttribute('data-desc');
+            const card = e.target.closest('.product-card');
+            currentProduct = card.querySelector('h3').innerText;
+            currentBasePrice = parseFloat(card.querySelector('.price').innerText.replace('Bs. ', ''));
             currentQty = 1;
+
+            document.getElementById('info-title').innerText = currentProduct;
+            document.getElementById('info-desc').innerText = card.getAttribute('data-desc') || '';
             document.getElementById('info-cantidad').innerText = currentQty;
+
             checkboxesExtras.forEach(cb => cb.checked = false);
-            actualizarPrecioInfo();
-            modalInfo.showModal();
+            actualizarPrecioModalInfo();
+            if (modalInfo) modalInfo.showModal();
         });
     });
 
-    function actualizarPrecioInfo() {
-        let extras = 0;
-        checkboxesExtras.forEach(cb => { if(cb.checked) extras += parseFloat(cb.dataset.price); });
-        document.getElementById('info-total-price').innerText = ((currentBasePrice + extras) * currentQty).toFixed(2);
+    if (closeInfoBtn && modalInfo) {
+        closeInfoBtn.addEventListener('click', () => modalInfo.close());
     }
 
-    checkboxesExtras.forEach(cb => cb.addEventListener('change', actualizarPrecioInfo));
-    document.getElementById('info-btn-sumar').addEventListener('click', () => { currentQty++; document.getElementById('info-cantidad').innerText = currentQty; actualizarPrecioInfo(); });
-    document.getElementById('info-btn-restar').addEventListener('click', () => { if(currentQty > 1) { currentQty--; document.getElementById('info-cantidad').innerText = currentQty; actualizarPrecioInfo(); }});
+    const btnSumarInfo = document.getElementById('info-btn-sumar');
+    const btnRestarInfo = document.getElementById('info-btn-restar');
     
-    document.getElementById('info-add-btn').addEventListener('click', () => {
-        let precioFinal = currentBasePrice;
-        let extrasTexto = [];
-        checkboxesExtras.forEach(cb => {
-            if(cb.checked) {
-                precioFinal += parseFloat(cb.dataset.price);
-                extrasTexto.push(cb.parentElement.innerText.split('(')[0].trim());
+    if (btnSumarInfo) {
+        btnSumarInfo.addEventListener('click', () => {
+            currentQty++;
+            document.getElementById('info-cantidad').innerText = currentQty;
+            actualizarPrecioModalInfo();
+        });
+    }
+
+    if (btnRestarInfo) {
+        btnRestarInfo.addEventListener('click', () => {
+            if (currentQty > 1) {
+                currentQty--;
+                document.getElementById('info-cantidad').innerText = currentQty;
+                actualizarPrecioModalInfo();
             }
         });
-        let tituloCarrito = currentProduct;
-        if(extrasTexto.length > 0) tituloCarrito += ` (+ ${extrasTexto.join(', ')})`;
+    }
 
-        agregarAlCarrito(tituloCarrito, precioFinal, currentQty);
-        modalInfo.close();
-        cajonCarrito.classList.add('open');
+    checkboxesExtras.forEach(cb => {
+        cb.addEventListener('change', actualizarPrecioModalInfo);
     });
 
-    document.getElementById('close-info').addEventListener('click', () => modalInfo.close());
-    
-    // Tema Oscuro / Claro y Login
-    document.getElementById('theme-toggle-btn').addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        const icon = document.querySelector('#theme-toggle-btn i');
-        icon.className = document.body.classList.contains('dark-mode') ? 'fas fa-sun' : 'fas fa-moon';
-    });
+    function actualizarPrecioModalInfo() {
+        let extrasTotal = 0;
+        checkboxesExtras.forEach(cb => {
+            if (cb.checked) extrasTotal += parseFloat(cb.getAttribute('data-price'));
+        });
+        const totalUnitario = currentBasePrice + extrasTotal;
+        const totalFinal = totalUnitario * currentQty;
+        const totalPriceEl = document.getElementById('info-total-price');
+        if (totalPriceEl) totalPriceEl.innerText = totalFinal.toFixed(2);
+    }
 
-    const modalLogin = document.getElementById('login-modal');
-    document.getElementById('login-btn').addEventListener('click', () => modalLogin.showModal());
-    document.getElementById('close-login').addEventListener('click', () => modalLogin.close());
-    document.getElementById('login-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        alert("Sesión iniciada con éxito");
-        modalLogin.close();
-    });
+    const infoAddBtn = document.getElementById('info-add-btn');
+    if (infoAddBtn && modalInfo) {
+        infoAddBtn.addEventListener('click', () => {
+            let extrasTotal = 0;
+            let extrasNombres = [];
+            checkboxesExtras.forEach(cb => {
+                if (cb.checked) {
+                    extrasTotal += parseFloat(cb.getAttribute('data-price'));
+                    extrasNombres.push(cb.parentElement.innerText.trim().split('(')[0]);
+                }
+            });
+
+            const precioUnitarioConExtras = currentBasePrice + extrasTotal;
+            const nombreConExtras = extrasNombres.length > 0 ? `${currentProduct} (+ ${extrasNombres.join(', ')})` : currentProduct;
+
+            agregarAlCarrito(nombreConExtras, precioUnitarioConExtras, currentQty);
+            modalInfo.close();
+            showNotification(`¡${currentProduct} añadido al pedido!`);
+        });
+    }
+
+    // Botones de login básicos
+    const loginBtn = document.getElementById('login-btn');
+    const loginModal = document.getElementById('login-modal');
+    const closeLogin = document.getElementById('close-login');
+    const loginForm = document.getElementById('login-form');
+
+    if (loginBtn && loginModal) {
+        loginBtn.addEventListener('click', () => loginModal.showModal());
+    }
+    if (closeLogin && loginModal) {
+        closeLogin.addEventListener('click', () => loginModal.close());
+    }
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            loginModal.close();
+            showNotification('¡Sesión iniciada con éxito!');
+            loginForm.reset();
+        });
+    }
+
+    const heroOrderBtn = document.getElementById('hero-order-btn');
+    if (heroOrderBtn) {
+        heroOrderBtn.addEventListener('click', () => {
+            document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
+        });
+    }
 });
