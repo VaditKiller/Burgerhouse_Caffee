@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Burgerhaus & Café</title>
-    <!-- Fuentes de Google -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <!-- FontAwesome para el icono de modo oscuro y redes sociales -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -26,28 +24,29 @@
             </nav>
 
             <div class="header__actions">
-                <button type="button" class="btn btn--secondary" style="color: inherit; border-color: inherit;">Iniciar Sesión</button>
+                <button type="button" id="login-btn" class="btn btn--secondary" style="color: inherit; border-color: inherit;">Iniciar Sesión</button>
                 
                 <button id="theme-toggle-btn" class="theme-toggle" aria-label="Cambiar tema oscuro/claro" type="button">
                     <i class="fas fa-moon"></i>
                 </button>
                 
-                <!-- ICONO DEL CARRITO (SVG NATIVO PARA EVITAR ERRORES) -->
-                <button id="cart-toggle-btn" class="cart-icon" aria-label="Abrir carrito, 0 productos" aria-expanded="false" type="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24">
+                <!-- ICONO DEL CARRITO ACCESIBLE (P1) -->
+                <button id="cart-toggle-btn" class="cart-icon" aria-label="Abrir carrito, 0 productos" aria-expanded="false" aria-controls="cart-drawer" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                         <path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/>
                     </svg>
                     <span class="cart-badge">0</span>
                 </button>
 
-                <button id="hamburger-btn" class="hamburger" aria-label="Abrir menú de navegación" aria-expanded="false" type="button">
+                <!-- MENÚ MÓVIL (P2) -->
+                <button id="hamburger-btn" class="hamburger" aria-label="Abrir menú de navegación" aria-expanded="false" aria-controls="main-nav" type="button">
                     <span></span><span></span><span></span>
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- HERO SECTION (CENTRADO CORREGIDO) -->
+    <!-- HERO SECTION -->
     <section class="hero">
         <div class="hero__overlay"></div>
         <div class="container hero__container">
@@ -65,14 +64,13 @@
         <div class="container">
             <h2 class="section__title">Nuestro Menú</h2>
             
-            <!-- Filtros Corregidos -->
             <ul class="menu-filters">
                 <li><button type="button" class="active">Todo</button></li>
                 <li><button type="button">Hamburguesas</button></li>
                 <li><button type="button">Combos</button></li>
             </ul>
 
-            <!-- TARJETAS DE PRODUCTOS CON IMÁGENES CORREGIDAS -->
+            <!-- PRODUCTOS CON IMÁGENES CORREGIDAS Y ETIQUETAS ARIA (P3) -->
             <div class="menu__grid" id="menu-grid">
                 <div class="product-card">
                     <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80" alt="Doble Cheese Burger">
@@ -111,24 +109,6 @@
                     <button type="button" class="btn btn--primary btn-add" aria-label="Añadir Mushroom Swiss al pedido">Añadir al Pedido</button>
                 </div>
                 <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1553979459-d2229ba7433b?auto=format&fit=crop&w=500&q=80" alt="Spicy Jalapeño">
-                    <h3>Spicy Jalapeño</h3>
-                    <p class="price">Bs. 42.00</p>
-                    <button type="button" class="btn btn--primary btn-add" aria-label="Añadir Spicy Jalapeño al pedido">Añadir al Pedido</button>
-                </div>
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1565299507177-b0ac66763828?auto=format&fit=crop&w=500&q=80" alt="Smash Burger">
-                    <h3>Smash Burger</h3>
-                    <p class="price">Bs. 38.00</p>
-                    <button type="button" class="btn btn--primary btn-add" aria-label="Añadir Smash Burger al pedido">Añadir al Pedido</button>
-                </div>
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1572802419224-296b0aeee0d9?auto=format&fit=crop&w=500&q=80" alt="Blue Cheese Burger">
-                    <h3>Blue Cheese Burger</h3>
-                    <p class="price">Bs. 50.00</p>
-                    <button type="button" class="btn btn--primary btn-add" aria-label="Añadir Blue Cheese Burger al pedido">Añadir al Pedido</button>
-                </div>
-                <div class="product-card">
                     <img src="https://images.unsplash.com/photo-1547584370-2cc98b8b8dc5?auto=format&fit=crop&w=500&q=80" alt="Texas Ranch">
                     <h3>Texas Ranch</h3>
                     <p class="price">Bs. 48.00</p>
@@ -140,29 +120,11 @@
                     <p class="price">Bs. 44.00</p>
                     <button type="button" class="btn btn--primary btn-add" aria-label="Añadir Teriyaki Burger al pedido">Añadir al Pedido</button>
                 </div>
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1582196016295-f8c8bd4b3a99?auto=format&fit=crop&w=500&q=80" alt="Hamburguesa Hawaiana">
-                    <h3>Hamburguesa Hawaiana</h3>
-                    <p class="price">Bs. 42.00</p>
-                    <button type="button" class="btn btn--primary btn-add" aria-label="Añadir Hamburguesa Hawaiana al pedido">Añadir al Pedido</button>
-                </div>
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1551782450-a2132b4ba21d?auto=format&fit=crop&w=500&q=80" alt="Truffle Mayo">
-                    <h3>Truffle Mayo</h3>
-                    <p class="price">Bs. 55.00</p>
-                    <button type="button" class="btn btn--primary btn-add" aria-label="Añadir Truffle Mayo al pedido">Añadir al Pedido</button>
-                </div>
-                <div class="product-card">
-                    <img src="https://images.unsplash.com/photo-1610440042657-612c34d95e9f?auto=format&fit=crop&w=500&q=80" alt="Burgerhaus Especial">
-                    <h3>Burgerhaus Especial</h3>
-                    <p class="price">Bs. 60.00</p>
-                    <button type="button" class="btn btn--primary btn-add" aria-label="Añadir Burgerhaus Especial al pedido">Añadir al Pedido</button>
-                </div>
             </div>
         </div>
     </section>
 
-    <!-- FOOTER ESTRUCTURADO Y CORREGIDO -->
+    <!-- FOOTER CENTRADO -->
     <footer class="footer">
         <div class="footer__container">
             <div class="footer__section">
@@ -172,16 +134,16 @@
             <div class="footer__section">
                 <h4>Navegación</h4>
                 <ul>
-                    <li><a href="#">Políticas de Privacidad</a></li>
-                    <li><a href="#">Términos de Servicio</a></li>
-                    <li><a href="#">Preguntas Frecuentes</a></li>
+                    <li><a href="#privacidad">Políticas de Privacidad</a></li>
+                    <li><a href="#terminos">Términos de Servicio</a></li>
+                    <li><a href="#faq">Preguntas Frecuentes</a></li>
                 </ul>
             </div>
             <div class="footer__section">
                 <h4>Síguenos</h4>
                 <div class="footer__social">
-                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f fa-lg"></i></a>
-                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram fa-lg"></i></a>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f fa-lg"></i></a>
+                    <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram fa-lg"></i></a>
                 </div>
             </div>
         </div>
@@ -189,6 +151,23 @@
             <p>&copy; 2026 Burgerhaus & Café. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <!-- MODAL DE INICIO DE SESIÓN (FUNCIONALIDAD AGREGADA) -->
+    <dialog id="login-modal" class="modal" aria-labelledby="login-title">
+        <button id="close-login" class="modal__close" aria-label="Cerrar modal de inicio de sesión" type="button">×</button>
+        <h2 id="login-title" class="modal__title">Iniciar Sesión</h2>
+        <form id="login-form">
+            <div class="form__group">
+                <label for="login-email">Correo Electrónico *</label>
+                <input type="email" id="login-email" name="email" required autocomplete="email">
+            </div>
+            <div class="form__group">
+                <label for="login-password">Contraseña *</label>
+                <input type="password" id="login-password" name="password" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn--primary btn--full">Entrar</button>
+        </form>
+    </dialog>
 
     <!-- CAJÓN DEL CARRITO -->
     <div id="cart-drawer" class="cart-drawer" aria-labelledby="cart-title" role="dialog" aria-modal="true">
@@ -207,11 +186,13 @@
         </div>
     </div>
 
-    <!-- MODAL DE CHECKOUT (NATIVO <dialog> P1 y P2) -->
-    <dialog id="checkout-modal" class="modal">
+    <!-- MODAL DE CHECKOUT (FORMULARIO COMPLETADO P2) -->
+    <dialog id="checkout-modal" class="modal" aria-labelledby="checkout-title">
         <button id="close-checkout" class="modal__close" aria-label="Cerrar modal de pago" type="button">×</button>
-        <h2 class="modal__title">Finalizar Compra</h2>
-        <p id="form-errors" hidden style="color: red; margin-bottom: 10px; font-weight: bold;" tabindex="-1"></p>
+        <h2 id="checkout-title" class="modal__title">Finalizar Compra</h2>
+        
+        <!-- Contenedor explícito de errores (P3) -->
+        <div id="form-errors" class="form-errors" role="alert" hidden tabindex="-1"></div>
         
         <form id="checkout-form">
             <div class="form__group">
