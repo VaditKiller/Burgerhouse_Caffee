@@ -1,5 +1,5 @@
 /* ========================================== */
-/* VARIABLES (CON SOPORTE PARA MODO OSCURO)   */
+/* VARIABLES Y MODO OSCURO GLOBAL             */
 /* ========================================== */
 :root {
     --primary-color: #e67e22;
@@ -13,7 +13,6 @@
     --font-serif: 'Playfair Display', serif;
 }
 
-/* Variables activas cuando el body tiene la clase dark-mode */
 body.dark-mode {
     --light-bg: #121212;
     --white: #1e1e1e;
@@ -36,18 +35,15 @@ body {
     transition: background-color 0.3s, color 0.3s;
 }
 
-html {
-    scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
+.container { width: 90%; max-width: 1200px; margin: 0 auto; }
 
-.container {
-    width: 90%;
-    max-width: 1200px;
-    margin: 0 auto;
-}
+/* Enlaces generales */
+a { color: var(--text-color); text-decoration: none; transition: color 0.3s; }
+a:hover { color: var(--primary-color); }
 
 /* ========================================== */
-/* BOTONES Y FOCO ACCESIBLE (P1, P2)          */
+/* BOTONES Y FOCO ACCESIBLE                   */
 /* ========================================== */
 .btn {
     display: inline-block;
@@ -58,13 +54,13 @@ html {
     cursor: pointer;
     border: none;
     transition: all 0.3s ease;
+    text-align: center;
 }
-
 .btn--primary { background-color: var(--primary-color); color: #fff; }
 .btn--primary:hover { background-color: var(--primary-hover); }
 .btn--outline { background-color: transparent; color: #fff; border: 2px solid #fff; }
 .btn--outline:hover { background-color: #fff; color: #2c3e50; }
-.btn--secondary { background-color: transparent; color: var(--dark-color); border: 1px solid var(--dark-color); padding: 8px 16px; }
+.btn--secondary { background-color: transparent; border: 1px solid var(--border-color); padding: 8px 16px; }
 .btn--full { width: 100%; }
 
 button:focus-visible, input:focus-visible, a:focus-visible {
@@ -83,24 +79,17 @@ button:focus-visible, input:focus-visible, a:focus-visible {
     z-index: 100;
     padding: 15px 0;
 }
-
-.header__container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.header__logo { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--dark-color); text-decoration: none; }
+.header__container { display: flex; justify-content: space-between; align-items: center; }
+.header__logo { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 700; color: var(--dark-color); }
 .nav__list { display: flex; list-style: none; gap: 20px; }
-.nav__link { text-decoration: none; color: var(--dark-color); font-weight: 500; transition: color 0.3s; }
-.nav__link:hover { color: var(--primary-color); }
+.nav__link { font-weight: 500; }
 .header__actions { display: flex; align-items: center; gap: 15px; }
-.theme-toggle, .hamburger, .cart-icon { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--dark-color); }
+.theme-toggle, .hamburger, .cart-icon { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-color); }
 
-.cart-icon { position: relative; }
+.cart-icon { position: relative; display: flex; align-items: center; justify-content: center;}
 .cart-badge {
     position: absolute;
-    top: -8px; right: -10px;
+    top: -5px; right: -8px;
     background-color: var(--primary-color);
     color: #fff;
     font-size: 0.75rem;
@@ -108,11 +97,10 @@ button:focus-visible, input:focus-visible, a:focus-visible {
     padding: 2px 6px;
     border-radius: 50%;
 }
-
-.hamburger span { display: block; width: 25px; height: 3px; background-color: var(--dark-color); margin: 5px 0; transition: 0.3s; }
+.hamburger span { display: block; width: 25px; height: 3px; background-color: var(--text-color); margin: 5px 0; transition: 0.3s; }
 
 /* ========================================== */
-/* HERO (CORRECCIÓN DE CENTRADO)              */
+/* HERO (CENTREAO)                            */
 /* ========================================== */
 .hero {
     position: relative;
@@ -124,32 +112,44 @@ button:focus-visible, input:focus-visible, a:focus-visible {
     display: flex;
     align-items: center;
 }
-
 .hero__overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); }
-
 .hero__container {
     position: relative;
     z-index: 1;
     color: #fff;
     max-width: 800px;
-    /* CENTRADO APLICADO AQUÍ */
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
 }
-
-.hero__title { font-family: var(--font-serif); font-size: 3.5rem; line-height: 1.1; margin-bottom: 1rem; }
+.hero__title { font-family: var(--font-serif); font-size: 3.5rem; line-height: 1.1; margin-bottom: 1rem; color: #fff;}
 .hero__subtitle { font-size: 1.2rem; margin-bottom: 2rem; opacity: 0.9; }
 .hero__cta { display: flex; gap: 15px; justify-content: center; }
 
 /* ========================================== */
-/* TARJETAS DE MENÚ                           */
+/* FILTROS Y MENÚ                             */
 /* ========================================== */
 .menu-section { padding: 5rem 0; }
 .section__title { font-family: var(--font-serif); font-size: 2.5rem; text-align: center; color: var(--dark-color); margin-bottom: 2rem; }
-.menu__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem; }
 
+.menu-filters { display: flex; justify-content: center; gap: 15px; margin-bottom: 2rem; list-style: none; flex-wrap: wrap; }
+.menu-filters button {
+    background-color: var(--white);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.menu-filters button.active, .menu-filters button:hover {
+    background-color: var(--primary-color);
+    color: #fff;
+    border-color: var(--primary-color);
+}
+
+.menu__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 2rem; }
 .product-card {
     background: var(--white);
     border: 1px solid var(--border-color);
@@ -162,7 +162,6 @@ button:focus-visible, input:focus-visible, a:focus-visible {
     justify-content: space-between;
     transition: transform 0.3s ease;
 }
-
 .product-card:hover { transform: translateY(-5px); }
 .product-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem; }
 .product-card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--dark-color); }
@@ -170,28 +169,22 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 .btn-add { width: 100%; margin-top: auto; }
 
 /* ========================================== */
-/* CARRITO (CORRECCIÓN DE VISIBILIDAD)        */
+/* CARRITO Y MODAL                            */
 /* ========================================== */
 .cart-drawer {
     position: fixed;
-    top: 0;
-    right: -100%; /* Oculto por defecto */
-    width: 350px;
-    max-width: 100%;
-    height: 100vh;
+    top: 0; right: -100%;
+    width: 350px; max-width: 100%; height: 100vh;
     background: var(--white);
     box-shadow: -4px 0 15px rgba(0,0,0,0.2);
     transition: right 0.3s ease;
     z-index: 2000;
-    display: flex;
-    flex-direction: column;
+    display: flex; flex-direction: column;
 }
-
-/* CLASE QUE EL JS ACTIVA PARA MOSTRAR EL CARRITO */
 .cart-drawer.open { right: 0; }
-
 .cart-drawer__header { display: flex; justify-content: space-between; align-items: center; padding: 20px; background: var(--light-bg); border-bottom: 1px solid var(--border-color); }
-.cart-drawer__close { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--dark-color); }
+.cart-drawer__header h2 { color: var(--dark-color); }
+.cart-drawer__close { background: none; border: none; font-size: 1.8rem; cursor: pointer; color: var(--text-color); }
 .cart-drawer__body { flex-grow: 1; overflow-y: auto; padding: 20px; }
 .cart-item { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--border-color); color: var(--text-color); }
 .cart-item button { background: var(--light-bg); border: 1px solid var(--border-color); color: var(--text-color); border-radius: 4px; padding: 2px 8px; cursor: pointer; }
@@ -199,21 +192,10 @@ button:focus-visible, input:focus-visible, a:focus-visible {
 .summary__row { display: flex; justify-content: space-between; margin-bottom: 10px; color: var(--text-color); }
 .summary__row.total { font-weight: bold; font-size: 1.2rem; margin-bottom: 20px; color: var(--dark-color); }
 
-/* ========================================== */
-/* MODAL NATIVO ACCESIBLE (<dialog>)          */
-/* ========================================== */
 dialog.modal {
-    border: none;
-    border-radius: 12px;
-    padding: 2rem;
-    max-width: 500px;
-    width: 90%;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-    margin: auto;
-    background-color: var(--white);
-    color: var(--text-color);
+    border: none; border-radius: 12px; padding: 2rem; max-width: 500px; width: 90%;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin: auto; background-color: var(--white); color: var(--text-color);
 }
-
 dialog.modal::backdrop { background-color: rgba(0, 0, 0, 0.7); }
 .modal__close { position: absolute; top: 15px; right: 15px; font-size: 1.5rem; background: none; border: none; cursor: pointer; color: var(--text-color); }
 .modal__title { font-family: var(--font-serif); color: var(--dark-color); margin-bottom: 1.5rem; font-size: 1.5rem; }
@@ -222,13 +204,25 @@ dialog.modal::backdrop { background-color: rgba(0, 0, 0, 0.7); }
 .form__group input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background-color: var(--light-bg); color: var(--text-color); }
 
 /* ========================================== */
+/* FOOTER ESTRUCTURADO                        */
+/* ========================================== */
+.footer { background-color: var(--white); color: var(--text-color); padding: 3rem 0 1rem; border-top: 1px solid var(--border-color); margin-top: 4rem; }
+.footer__container { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2rem; max-width: 1200px; margin: 0 auto; width: 90%; }
+.footer__section { flex: 1; min-width: 250px; }
+.footer__section h3, .footer__section h4 { color: var(--dark-color); margin-bottom: 1rem; }
+.footer__section ul { list-style: none; }
+.footer__section ul li { margin-bottom: 0.5rem; }
+.footer__social { display: flex; gap: 15px; margin-top: 1rem; }
+.footer__bottom { text-align: center; padding-top: 2rem; margin-top: 2rem; border-top: 1px solid var(--border-color); font-size: 0.9rem; opacity: 0.8; }
+
+/* ========================================== */
 /* RESPONSIVE                                 */
 /* ========================================== */
 @media screen and (max-width: 768px) {
     .nav { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--white); box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 1rem 0; }
     .nav.active { display: block; }
     .nav__list { flex-direction: column; align-items: center; gap: 15px; }
-    .header__user { display: none; }
+    .header__actions .btn--secondary { display: none; }
     .hero__title { font-size: 2.5rem; }
 }
 @media screen and (min-width: 769px) {

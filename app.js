@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const errorContainer = document.getElementById('form-errors');
 
     // ==========================================
-    // MODO OSCURO (Solución de error)
+    // MODO OSCURO (Solución Global)
     // ==========================================
     if (btnThemeToggle) {
         btnThemeToggle.addEventListener('click', () => {
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // MENÚ MÓVIL (P2)
+    // MENÚ MÓVIL Y ACCESIBILIDAD (P2)
     // ==========================================
     if (btnMenu) {
         btnMenu.addEventListener('click', () => {
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ==========================================
-    // CARRITO LATERAL (P1 & Solución de visibilidad)
+    // CARRITO LATERAL (P1 & Visibilidad)
     // ==========================================
     if (btnToggleCarrito && cajonCarrito) {
         btnToggleCarrito.addEventListener('click', () => {
@@ -62,18 +62,18 @@ document.addEventListener('DOMContentLoaded', () => {
         btnCerrarCajon.addEventListener('click', () => {
             cajonCarrito.classList.remove('open');
             btnToggleCarrito.setAttribute('aria-expanded', 'false');
-            btnToggleCarrito.focus();
+            btnToggleCarrito.focus(); // Retorno de foco accesible
         });
     }
 
     // ==========================================
-    // MODAL CHECKOUT (P1)
+    // MODAL CHECKOUT ACCESIBLE (P1)
     // ==========================================
     if (btnCheckout && modalCheckout) {
         btnCheckout.addEventListener('click', () => {
             if (carrito.length === 0) return alert("Agrega productos antes de pagar.");
             cajonCarrito.classList.remove('open');
-            modalCheckout.showModal(); 
+            modalCheckout.showModal(); // API Nativa de Dialog
         });
     }
 
@@ -92,20 +92,21 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             if (!checkoutForm.checkValidity()) {
                 errorContainer.removeAttribute('hidden');
-                errorContainer.innerText = "Error: Por favor completa los campos obligatorios.";
+                errorContainer.innerText = "Error: Por favor completa los campos obligatorios (Nombre, Teléfono y Dirección).";
                 errorContainer.focus();
             } else {
                 errorContainer.setAttribute('hidden', 'true');
                 alert("¡Pedido registrado exitosamente!");
                 carrito = [];
                 actualizarCarrito();
+                checkoutForm.reset();
                 modalCheckout.close();
             }
         });
     }
 
     // ==========================================
-    // LÓGICA DE AÑADIR PRODUCTOS (P3, P1)
+    // LÓGICA DEL CARRITO (P3, P1)
     // ==========================================
     botonesAdd.forEach(boton => {
         boton.addEventListener('click', (e) => {
@@ -130,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (carrito.length === 0) {
             contenedorItems.innerHTML = '<p class="cart__empty-msg">Tu carrito está vacío.</p>';
             if(totalElemento) totalElemento.innerText = 'Bs. 0.00';
+            document.getElementById('cart-subtotal').innerText = 'Bs. 0.00';
             return;
         }
 
@@ -146,10 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     <span>Bs. ${(item.precio * item.cantidad).toFixed(2)}</span>
                 </div>
                 <div style="display:flex; gap:10px; align-items:center;">
-                    <button type="button" class="btn-restar" data-index="${index}" aria-label="Disminuir ${item.titulo}">−</button>
+                    <button type="button" class="btn-restar" data-index="${index}" aria-label="Disminuir cantidad de ${item.titulo}">−</button>
                     <span aria-hidden="true">${item.cantidad}</span>
-                    <button type="button" class="btn-sumar" data-index="${index}" aria-label="Aumentar ${item.titulo}">+</button>
-                    <button type="button" class="btn-eliminar" data-index="${index}" aria-label="Eliminar ${item.titulo}" style="color:red; border:none; margin-left:auto;">×</button>
+                    <button type="button" class="btn-sumar" data-index="${index}" aria-label="Aumentar cantidad de ${item.titulo}">+</button>
+                    <button type="button" class="btn-eliminar" data-index="${index}" aria-label="Eliminar ${item.titulo} del carrito" style="color:red; border:none; margin-left:auto; font-weight:bold; font-size:1.2rem;">×</button>
                 </div>
             `;
             contenedorItems.appendChild(div);
